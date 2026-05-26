@@ -1,0 +1,5 @@
+:8000 {
+  root * /app
+  file_server
+  try_files {path} /index.html
+}
