@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Venues – Utsavam</title>
+  <meta name="description" content="Search and filter the best wedding halls, convention centres, farmhouses, party halls and resorts across India.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .mobile-filter-toggle {
+      display: none; margin-bottom: 16px;
+    }
+    @media(max-width:768px){
+      .mobile-filter-toggle { display: flex; }
+    }
+    .no-results { text-align:center; padding:60px 20px; }
+    .no-results i { font-size:3rem; color:var(--cream-dark); margin-bottom:16px; display:block; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon"><i class="fas fa-om"></i></div>
+      <span class="logo-text">Utsa<span>vam</span></span>
+    </a>
+    <div class="navbar-links">
+      <a href="index.html"           class="nav-link">Home</a>
+      <a href="venues.html"          class="nav-link">Browse Venues</a>
+      <a href="register-venue.html"  class="nav-link">List Your Venue</a>
+      <a href="contact.html"         class="nav-link">Contact</a>
+    </div>
+    <div class="navbar-cta">
+      <a href="register-venue.html" class="btn btn-nav btn-nav-outline">List Venue</a>
+      <a href="admin.html"          class="btn btn-nav btn-nav-primary">Admin</a>
+    </div>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"          class="nav-link">Home</a>
+  <a href="venues.html"         class="nav-link">Browse Venues</a>
+  <a href="register-venue.html" class="nav-link">List Your Venue</a>
+  <a href="contact.html"        class="nav-link">Contact Us</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <i class="fas fa-chevron-right"></i>
+      <span>Browse Venues</span>
+    </div>
+    <h1>Find Your Perfect Venue</h1>
+    <p>Explore verified wedding halls, convention centres, farmhouses, party halls and resorts.</p>
+  </div>
+</section>
+
+<!-- MAIN -->
+<div class="container">
+  <div class="venues-page-layout">
+
+    <!-- FILTER SIDEBAR -->
+    <aside class="filter-sidebar" id="filterSidebar">
+      <div class="flex-between mb-16">
+        <h4><i class="fas fa-sliders-h" style="color:var(--gold-dark);margin-right:8px;"></i>Filters</h4>
+        <button class="btn btn-sm" style="color:var(--crimson);font-size:0.78rem;font-weight:600;" onclick="clearFilters()">Clear All</button>
+      </div>
+
+      <div class="filter-group">
+        <label>Venue Type</label>
+        <select id="filterType" onchange="applyFilters()">
+          <option value="">All Types</option>
+          <option value="wedding_hall">Wedding Hall</option>
+          <option value="convention_center">Convention Centre</option>
+          <option value="farm_house">Farm House</option>
+          <option value="party_hall">Party Hall</option>
+          <option value="resort">Resort</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>City</label>
+        <select id="filterCity" onchange="applyFilters()">
+          <option value="">All Cities</option>
+          <option value="Hyderabad">Hyderabad</option>
+          <option value="Chennai">Chennai</option>
+          <option value="Bangalore">Bangalore</option>
+          <option value="Mumbai">Mumbai</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Minimum Capacity</label>
+        <select id="filterCapacity" onchange="applyFilters()">
+          <option value="0">Any Capacity</option>
+          <option value="100">100+ guests</option>
+          <option value="200">200+ guests</option>
+          <option value="400">400+ guests</option>
+          <option value="600">600+ guests</option>
+          <option value="1000">1000+ guests</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Max Budget (per day)</label>
+        <input type="range" id="filterPrice" min="50000" max="600000" step="25000" value="600000" oninput="updatePriceDisplay(); applyFilters()">
+        <div class="price-range-display">
+          <span>₹50K</span>
+          <span id="priceDisplay" style="color:var(--crimson);font-weight:600;">Any</span>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Amenities</label>
+        <div class="filter-checkboxes">
+          <label class="filter-checkbox">
+            <input type="checkbox" value="Air Conditioning" onchange="applyFilters()"> AC / Air Conditioning
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" value="Catering" onchange="applyFilters()"> In-house Catering
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" value="Parking" onchange="applyFilters()"> Parking
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" value="Swimming Pool" onchange="applyFilters()"> Swimming Pool
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" value="DJ" onchange="applyFilters()"> DJ Setup
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" value="Wi-Fi" onchange="applyFilters()"> Wi-Fi
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Sort By</label>
+        <select id="filterSort" onchange="applyFilters()">
+          <option value="rating">Highest Rated</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="capacity">Largest Capacity</option>
+          <option value="name">Name A–Z</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary btn-full mt-16" onclick="applyFilters()">
+        <i class="fas fa-filter"></i> Apply Filters
+      </button>
+    </aside>
+
+    <!-- VENUES MAIN -->
+    <main class="venues-main">
+      <!-- Mobile filter toggle -->
+      <button class="btn btn-outline btn-sm mobile-filter-toggle" onclick="toggleMobileFilter()">
+        <i class="fas fa-sliders-h"></i> Filters
+      </button>
+
+      <!-- Search bar -->
+      <div class="search-bar-inline">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInline" placeholder="Search by name, area, or amenity…" oninput="applyFilters()">
+        <button onclick="clearSearch()" style="color:var(--text-light);font-size:0.8rem;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="venues-toolbar">
+        <p class="venues-count">Showing <strong id="venueCount">0</strong> venues</p>
+        <div class="flex gap-8 flex-wrap">
+          <div id="activeFilterTags" class="flex gap-8 flex-wrap"></div>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div class="venues-grid" id="venuesGrid">
+        <!-- JS populated -->
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination"></div>
+    </main>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-text">Utsa<span>vam</span></div>
+        <p>India's most trusted event venue aggregator.</p>
+        <div class="social-links">
+          <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Venue Types</h5>
+        <div class="footer-links">
+          <a href="venues.html?type=wedding_hall"      class="footer-link"><i class="fas fa-chevron-right"></i> Wedding Halls</a>
+          <a href="venues.html?type=convention_center" class="footer-link"><i class="fas fa-chevron-right"></i> Convention Centres</a>
+          <a href="venues.html?type=farm_house"        class="footer-link"><i class="fas fa-chevron-right"></i> Farm Houses</a>
+          <a href="venues.html?type=party_hall"        class="footer-link"><i class="fas fa-chevron-right"></i> Party Halls</a>
+          <a href="venues.html?type=resort"            class="footer-link"><i class="fas fa-chevron-right"></i> Resorts</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <div class="footer-links">
+          <a href="index.html"           class="footer-link"><i class="fas fa-chevron-right"></i> Home</a>
+          <a href="contact.html"         class="footer-link"><i class="fas fa-chevron-right"></i> Contact Us</a>
+          <a href="register-venue.html"  class="footer-link"><i class="fas fa-chevron-right"></i> List Your Venue</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <div class="footer-links">
+          <span class="footer-link"><i class="fas fa-phone"></i> +91 99999 00000</span>
+          <span class="footer-link"><i class="fas fa-envelope"></i> hello@utsavam.in</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-bottom">
+      <p>© 2024 Utsavam. All rights reserved.</p>
+      <p class="made-with">Made with <i class="fas fa-heart"></i> for every celebration</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script>
+const PER_PAGE = 9;
+let currentPage = 1;
+let filteredVenues = [];
+
+function updatePriceDisplay() {
+  const val = parseInt(document.getElementById('filterPrice').value);
+  const el  = document.getElementById('priceDisplay');
+  if (val >= 600000) { el.textContent = 'Any'; }
+  else { el.textContent = Utils.formatPrice(val); }
+}
+
+function getAmenityFilters() {
+  return Array.from(document.querySelectorAll('.filter-checkboxes input[type=checkbox]:checked'))
+              .map(cb => cb.value);
+}
+
+function applyFilters() {
+  const query    = (document.getElementById('searchInline')?.value || '').trim();
+  const type     = document.getElementById('filterType').value;
+  const city     = document.getElementById('filterCity').value;
+  const capacity = parseInt(document.getElementById('filterCapacity').value) || 0;
+  const maxPrice = parseInt(document.getElementById('filterPrice').value) || 600000;
+  const sortBy   = document.getElementById('filterSort').value;
+  const amenities= getAmenityFilters();
+
+  let venues = VenueDB.search({ query, type, city, maxPrice: maxPrice >= 600000 ? Infinity : maxPrice, minCapacity: capacity });
+
+  // Amenity filter
+  if (amenities.length > 0) {
+    venues = venues.filter(v =>
+      amenities.every(a => v.amenities.some(va =>
+        va.toLowerCase().includes(a.toLowerCase())
+      ))
+    );
+  }
+
+  // Sort
+  if (sortBy === 'rating')      venues.sort((a,b) => b.rating - a.rating);
+  else if (sortBy === 'price_asc')  venues.sort((a,b) => a.price - b.price);
+  else if (sortBy === 'price_desc') venues.sort((a,b) => b.price - a.price);
+  else if (sortBy === 'capacity')   venues.sort((a,b) => b.capacity - a.capacity);
+  else if (sortBy === 'name')       venues.sort((a,b) => a.name.localeCompare(b.name));
+
+  filteredVenues = venues;
+  currentPage = 1;
+  renderVenues();
+  renderPagination();
+  renderFilterTags({ type, city, capacity, maxPrice, amenities, query });
+}
+
+function renderVenues() {
+  const grid = document.getElementById('venuesGrid');
+  const start = (currentPage - 1) * PER_PAGE;
+  const page  = filteredVenues.slice(start, start + PER_PAGE);
+  const count = document.getElementById('venueCount');
+  if (count) count.textContent = filteredVenues.length;
+
+  if (filteredVenues.length === 0) {
+    grid.innerHTML = `
+      <div class="no-results" style="grid-column:1/-1;">
+        <i class="fas fa-search"></i>
+        <h3 style="color:var(--text-secondary);margin-bottom:8px;">No venues found</h3>
+        <p>Try adjusting your filters or search term.</p>
+        <button class="btn btn-outline mt-16" onclick="clearFilters()">Clear Filters</button>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = page.map(v => Utils.venueCardHTML(v)).join('');
+}
+
+function renderPagination() {
+  const totalPages = Math.ceil(filteredVenues.length / PER_PAGE);
+  const pag = document.getElementById('pagination');
+  if (totalPages <= 1) { pag.innerHTML = ''; return; }
+  let html = '';
+  if (currentPage > 1) html += `<button class="page-btn" onclick="goPage(${currentPage-1})"><i class="fas fa-chevron-left"></i></button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) {
+      html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 2) {
+      html += `<span class="page-btn" style="pointer-events:none">…</span>`;
+    }
+  }
+  if (currentPage < totalPages) html += `<button class="page-btn" onclick="goPage(${currentPage+1})"><i class="fas fa-chevron-right"></i></button>`;
+  pag.innerHTML = html;
+}
+
+function goPage(n) {
+  currentPage = n;
+  renderVenues();
+  renderPagination();
+  window.scrollTo({ top: 200, behavior: 'smooth' });
+}
+
+function renderFilterTags({ type, city, capacity, maxPrice, amenities, query }) {
+  const container = document.getElementById('activeFilterTags');
+  let tags = [];
+  if (query)    tags.push({ label: `"${query}"`, key: 'query' });
+  if (type)     tags.push({ label: Utils.typeLabel(type), key: 'type' });
+  if (city)     tags.push({ label: city, key: 'city' });
+  if (capacity) tags.push({ label: capacity + '+ guests', key: 'capacity' });
+  if (maxPrice < 600000) tags.push({ label: 'Under ' + Utils.formatPrice(maxPrice), key: 'price' });
+  amenities.forEach(a => tags.push({ label: a, key: 'amenity_' + a }));
+
+  container.innerHTML = tags.map(t => `
+    <span class="badge badge-crimson" style="cursor:pointer;" onclick="removeFilter('${t.key}')">
+      ${t.label} <i class="fas fa-times" style="margin-left:4px;"></i>
+    </span>`).join('');
+}
+
+function removeFilter(key) {
+  if (key === 'query')    { document.getElementById('searchInline').value = ''; }
+  else if (key === 'type')     { document.getElementById('filterType').value = ''; }
+  else if (key === 'city')     { document.getElementById('filterCity').value = ''; }
+  else if (key === 'capacity') { document.getElementById('filterCapacity').value = '0'; }
+  else if (key === 'price')    { document.getElementById('filterPrice').value = 600000; updatePriceDisplay(); }
+  else if (key.startsWith('amenity_')) {
+    const val = key.replace('amenity_', '');
+    document.querySelectorAll('.filter-checkboxes input').forEach(cb => {
+      if (cb.value === val) cb.checked = false;
+    });
+  }
+  applyFilters();
+}
+
+function clearFilters() {
+  document.getElementById('searchInline').value = '';
+  document.getElementById('filterType').value = '';
+  document.getElementById('filterCity').value = '';
+  document.getElementById('filterCapacity').value = '0';
+  document.getElementById('filterPrice').value = 600000;
+  document.getElementById('filterSort').value = 'rating';
+  document.querySelectorAll('.filter-checkboxes input').forEach(cb => cb.checked = false);
+  updatePriceDisplay();
+  applyFilters();
+}
+
+function clearSearch() {
+  document.getElementById('searchInline').value = '';
+  applyFilters();
+}
+
+function toggleMobileFilter() {
+  document.getElementById('filterSidebar').classList.toggle('mobile-open');
+}
+
+// Read URL params on load
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('type')) document.getElementById('filterType').value = params.get('type');
+  if (params.get('city')) document.getElementById('filterCity').value = params.get('city');
+  if (params.get('q'))    document.getElementById('searchInline').value = params.get('q');
+  updatePriceDisplay();
+  applyFilters();
+});
+</script>
+</body>
+</html>

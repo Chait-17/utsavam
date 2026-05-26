@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel – Utsavam</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen">
+  <div class="admin-login">
+    <div class="admin-login-card">
+      <div class="admin-login-logo">
+        <div class="logo-text">Utsa<span>vam</span></div>
+        <small>Admin Portal</small>
+      </div>
+      <h2>Welcome Back</h2>
+      <p>Sign in to manage venues, enquiries, and registrations.</p>
+      <div id="loginError" class="login-error">
+        <i class="fas fa-exclamation-circle"></i> Incorrect password. Please try again.
+      </div>
+      <form onsubmit="doLogin(event)">
+        <div class="form-group mb-16">
+          <label class="admin-label" style="text-align:left;display:block;">Password</label>
+          <div style="position:relative;">
+            <input type="password" class="form-control" id="loginPass" placeholder="Enter admin password" required
+                   style="padding-right:44px;">
+            <button type="button" onclick="togglePassVis()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-light);font-size:0.9rem;background:none;border:none;cursor:pointer;">
+              <i class="fas fa-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full btn-lg">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+      </form>
+      <p style="margin-top:20px;font-size:0.75rem;color:var(--text-light);">
+        Demo password: <code style="background:var(--cream-dark);padding:2px 6px;border-radius:4px;">utsavam@2024</code>
+      </p>
+      <div class="divider-line"></div>
+      <a href="index.html" style="font-size:0.82rem;color:var(--text-light);">
+        <i class="fas fa-arrow-left"></i> Back to Website
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ══ -->
+<div id="adminPanel" style="display:none;">
+  <div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <div class="logo-text">Utsa<span>vam</span></div>
+        <small>Admin Panel</small>
+      </div>
+      <nav class="admin-nav">
+        <div class="admin-nav-section">Main</div>
+        <div class="admin-nav-item active" onclick="switchTab('dashboard')">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </div>
+
+        <div class="admin-nav-section">Venues</div>
+        <div class="admin-nav-item" onclick="switchTab('venues')">
+          <i class="fas fa-building"></i> All Venues
+        </div>
+        <div class="admin-nav-item" onclick="switchTab('add-venue')">
+          <i class="fas fa-plus-circle"></i> Add New Venue
+        </div>
+
+        <div class="admin-nav-section">Enquiries</div>
+        <div class="admin-nav-item" onclick="switchTab('interests')">
+          <i class="fas fa-heart"></i> Interest Requests
+          <span id="interestBadge" style="margin-left:auto;background:var(--crimson);color:#fff;border-radius:30px;padding:1px 8px;font-size:0.7rem;"></span>
+        </div>
+        <div class="admin-nav-item" onclick="switchTab('contacts')">
+          <i class="fas fa-envelope"></i> Contact Messages
+          <span id="contactBadge" style="margin-left:auto;background:var(--crimson);color:#fff;border-radius:30px;padding:1px 8px;font-size:0.7rem;"></span>
+        </div>
+        <div class="admin-nav-item" onclick="switchTab('registrations')">
+          <i class="fas fa-clipboard-list"></i> Venue Registrations
+          <span id="regBadge" style="margin-left:auto;background:var(--crimson);color:#fff;border-radius:30px;padding:1px 8px;font-size:0.7rem;"></span>
+        </div>
+      </nav>
+      <div class="admin-logout">
+        <button class="admin-logout-btn" onclick="doLogout()">
+          <i class="fas fa-sign-out-alt"></i> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h2 id="tabTitle">Dashboard</h2>
+        <div class="admin-topbar-right">
+          <a href="index.html" target="_blank" class="btn btn-sm" style="color:var(--text-secondary);border:1px solid var(--cream-dark);border-radius:6px;padding:6px 12px;">
+            <i class="fas fa-external-link-alt"></i> View Site
+          </a>
+          <div class="admin-avatar">A</div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+
+        <!-- ── DASHBOARD ── -->
+        <div id="tab-dashboard" class="tab-content active">
+          <div class="admin-stats-grid" id="dashStats"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" id="dashCards">
+            <!-- Recent interests & registrations -->
+          </div>
+        </div>
+
+        <!-- ── ALL VENUES ── -->
+        <div id="tab-venues" class="tab-content">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3><i class="fas fa-building" style="color:var(--gold-dark);margin-right:8px;"></i>All Venues</h3>
+              <button class="btn btn-primary btn-sm" onclick="switchTab('add-venue')">
+                <i class="fas fa-plus"></i> Add Venue
+              </button>
+            </div>
+            <div style="padding:16px 24px 0;">
+              <div class="search-bar-inline" style="margin-bottom:16px;">
+                <i class="fas fa-search"></i>
+                <input type="text" id="venueSearch" placeholder="Search venues…" oninput="renderVenueTable()">
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>City</th>
+                    <th>Capacity</th>
+                    <th>Price/Day</th>
+                    <th>Rating</th>
+                    <th>Featured</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="venueTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ADD / EDIT VENUE ── -->
+        <div id="tab-add-venue" class="tab-content">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3 id="venueFormTitle"><i class="fas fa-plus-circle" style="color:var(--gold-dark);margin-right:8px;"></i>Add New Venue</h3>
+              <button class="btn btn-sm" style="color:var(--text-secondary);" onclick="resetVenueForm()">
+                <i class="fas fa-undo"></i> Reset
+              </button>
+            </div>
+            <div class="admin-card-body">
+              <form id="venueForm" onsubmit="saveVenue(event)">
+                <input type="hidden" id="f_id">
+                <div class="admin-form-grid">
+                  <div class="full-width">
+                    <label class="admin-label">Venue Name *</label>
+                    <input type="text" class="admin-input" id="f_name" required placeholder="e.g. Grand Palace Convention Centre">
+                  </div>
+                  <div>
+                    <label class="admin-label">Venue Type *</label>
+                    <select class="admin-input" id="f_type" required>
+                      <option value="">Select type</option>
+                      <option value="wedding_hall">Wedding Hall</option>
+                      <option value="convention_center">Convention Centre</option>
+                      <option value="farm_house">Farm House</option>
+                      <option value="party_hall">Party Hall</option>
+                      <option value="resort">Resort</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="admin-label">Guest Capacity *</label>
+                    <input type="number" class="admin-input" id="f_capacity" required placeholder="e.g. 500" min="1">
+                  </div>
+                  <div>
+                    <label class="admin-label">City *</label>
+                    <input type="text" class="admin-input" id="f_city" required placeholder="e.g. Hyderabad">
+                  </div>
+                  <div>
+                    <label class="admin-label">Area / Locality *</label>
+                    <input type="text" class="admin-input" id="f_area" required placeholder="e.g. Banjara Hills">
+                  </div>
+                  <div class="full-width">
+                    <label class="admin-label">Full Address *</label>
+                    <input type="text" class="admin-input" id="f_address" required placeholder="Full address">
+                  </div>
+                  <div>
+                    <label class="admin-label">Price per Day (₹) *</label>
+                    <input type="number" class="admin-input" id="f_price" required placeholder="e.g. 150000" min="1">
+                  </div>
+                  <div>
+                    <label class="admin-label">Phone *</label>
+                    <input type="tel" class="admin-input" id="f_phone" required placeholder="+91 98765 43210">
+                  </div>
+                  <div>
+                    <label class="admin-label">Email *</label>
+                    <input type="email" class="admin-input" id="f_email" required placeholder="info@venue.com">
+                  </div>
+                  <div>
+                    <label class="admin-label">Rating (0–5)</label>
+                    <input type="number" class="admin-input" id="f_rating" placeholder="4.5" min="0" max="5" step="0.1">
+                  </div>
+                  <div class="full-width">
+                    <label class="admin-label">Description *</label>
+                    <textarea class="admin-input" id="f_description" rows="4" required placeholder="Describe the venue…"></textarea>
+                  </div>
+                  <div class="full-width">
+                    <label class="admin-label">Amenities <span style="font-weight:400;color:var(--text-light);">(comma-separated)</span></label>
+                    <input type="text" class="admin-input" id="f_amenities" placeholder="AC, Parking, Catering, DJ, Wi-Fi, Pool">
+                  </div>
+                  <div class="full-width">
+                    <label class="admin-label">Photo URLs <span style="font-weight:400;color:var(--text-light);">(one per line)</span></label>
+                    <textarea class="admin-input" id="f_photoUrls" rows="3" placeholder="https://... (paste image URLs, one per line)"></textarea>
+                  </div>
+                  <div class="full-width">
+                    <label class="admin-label">Upload Photos (optional — adds to URLs above)</label>
+                    <div class="photo-upload-area" id="photoUploadArea"
+                         onclick="document.getElementById('photoFileInput').click()"
+                         ondragover="event.preventDefault();this.classList.add('dragover')"
+                         ondragleave="this.classList.remove('dragover')"
+                         ondrop="handlePhotoDrop(event)">
+                      <i class="fas fa-cloud-upload-alt"></i>
+                      <p>Click to upload or <span>drag and drop</span> photos here</p>
+                      <p style="font-size:0.75rem;margin-top:4px;">JPG, PNG — max 5 photos</p>
+                    </div>
+                    <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(event)">
+                    <div class="photo-preview-grid" id="photoPreviewGrid"></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <input type="checkbox" id="f_featured" style="width:18px;height:18px;accent-color:var(--crimson);">
+                    <label for="f_featured" style="cursor:pointer;font-size:0.88rem;color:var(--text-primary);">Mark as Featured Venue</label>
+                  </div>
+                </div>
+                <div style="margin-top:24px;display:flex;gap:12px;">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> <span id="saveVenueBtnText">Save Venue</span>
+                  </button>
+                  <button type="button" class="btn btn-outline" onclick="resetVenueForm()">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── INTEREST REQUESTS ── -->
+        <div id="tab-interests" class="tab-content">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3><i class="fas fa-heart" style="color:var(--crimson);margin-right:8px;"></i>Interest Requests</h3>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Venue</th>
+                    <th>Customer Name</th>
+                    <th>Phone</th>
+                    <th>Event Type</th>
+                    <th>Guests</th>
+                    <th>Event Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="interestTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CONTACT MESSAGES ── -->
+        <div id="tab-contacts" class="tab-content">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3><i class="fas fa-envelope" style="color:var(--gold-dark);margin-right:8px;"></i>Contact Messages</h3>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Subject</th>
+                    <th>Message</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="contactTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── VENUE REGISTRATIONS ── -->
+        <div id="tab-registrations" class="tab-content">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3><i class="fas fa-clipboard-list" style="color:var(--gold-dark);margin-right:8px;"></i>Venue Registration Requests</h3>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Venue Name</th>
+                    <th>Type</th>
+                    <th>City</th>
+                    <th>Contact</th>
+                    <th>Phone</th>
+                    <th>Capacity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="regTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal" style="max-width:420px;text-align:center;">
+    <div style="font-size:2.5rem;color:var(--crimson);margin-bottom:16px;"><i class="fas fa-trash-alt"></i></div>
+    <h3 style="margin-bottom:8px;">Delete Venue?</h3>
+    <p style="margin-bottom:24px;font-size:0.88rem;">This will permanently remove the venue from the listing. This action cannot be undone.</p>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <button class="btn btn-outline" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn btn-primary" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Registration Detail Modal -->
+<div class="modal-overlay" id="regDetailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Registration Details</h3>
+      <button class="modal-close" onclick="closeModal('regDetailModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="regDetailBody"></div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script>
+/* ── Auth ── */
+let pendingDeleteId = null;
+let uploadedPhotoDataUrls = [];
+
+function doLogin(e) {
+  e.preventDefault();
+  const pass = document.getElementById('loginPass').value;
+  if (AdminAuth.login(pass)) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadAdminPanel();
+  } else {
+    document.getElementById('loginError').style.display = 'flex';
+    document.getElementById('loginPass').value = '';
+  }
+}
+function doLogout() {
+  AdminAuth.logout();
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'block';
+  document.getElementById('loginPass').value = '';
+}
+function togglePassVis() {
+  const inp = document.getElementById('loginPass');
+  const ic  = document.getElementById('eyeIcon');
+  if (inp.type === 'password') { inp.type = 'text'; ic.className = 'fas fa-eye-slash'; }
+  else { inp.type = 'password'; ic.className = 'fas fa-eye'; }
+}
+
+/* ── Tab Switching ── */
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+  const items = document.querySelectorAll('.admin-nav-item');
+  items.forEach(i => { if (i.getAttribute('onclick')?.includes(name)) i.classList.add('active'); });
+  const titles = {
+    'dashboard': 'Dashboard', 'venues': 'All Venues', 'add-venue': 'Add New Venue',
+    'interests': 'Interest Requests', 'contacts': 'Contact Messages', 'registrations': 'Venue Registrations',
+  };
+  document.getElementById('tabTitle').textContent = titles[name] || 'Admin';
+  if (name === 'dashboard')     renderDashboard();
+  if (name === 'venues')        renderVenueTable();
+  if (name === 'interests')     renderInterestTable();
+  if (name === 'contacts')      renderContactTable();
+  if (name === 'registrations') renderRegTable();
+}
+
+/* ── Load Panel ── */
+function loadAdminPanel() {
+  updateBadges();
+  renderDashboard();
+}
+
+function updateBadges() {
+  const unreadInterests = InterestDB.all().filter(i => !i.read).length;
+  const unreadContacts  = ContactDB.all().filter(c => !c.read).length;
+  const pendingRegs     = RegistrationDB.all().filter(r => r.status === 'pending').length;
+  const ib = document.getElementById('interestBadge');
+  const cb = document.getElementById('contactBadge');
+  const rb = document.getElementById('regBadge');
+  if (ib) ib.textContent = unreadInterests || '';
+  if (cb) cb.textContent = unreadContacts  || '';
+  if (rb) rb.textContent = pendingRegs     || '';
+}
+
+/* ── Dashboard ── */
+function renderDashboard() {
+  const venues     = VenueDB.all();
+  const interests  = InterestDB.all();
+  const contacts   = ContactDB.all();
+  const regs       = RegistrationDB.all();
+  const pendingReg = regs.filter(r => r.status === 'pending');
+
+  document.getElementById('dashStats').innerHTML = `
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon red"><i class="fas fa-building"></i></div>
+      <div><div class="admin-stat-number">${venues.length}</div><div class="admin-stat-label">Total Venues</div></div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon gold"><i class="fas fa-heart"></i></div>
+      <div><div class="admin-stat-number">${interests.length}</div><div class="admin-stat-label">Interest Requests</div></div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon green"><i class="fas fa-envelope"></i></div>
+      <div><div class="admin-stat-number">${contacts.length}</div><div class="admin-stat-label">Messages</div></div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon blue"><i class="fas fa-clipboard-list"></i></div>
+      <div><div class="admin-stat-number">${pendingReg.length}</div><div class="admin-stat-label">Pending Registrations</div></div>
+    </div>`;
+
+  const recentInterests = interests.slice(0, 5);
+  const recentRegs      = regs.slice(0, 5);
+
+  document.getElementById('dashCards').innerHTML = `
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3>Recent Interest Requests</h3>
+        <button class="btn btn-sm" style="color:var(--crimson);font-size:0.78rem;" onclick="switchTab('interests')">View All</button>
+      </div>
+      <div class="admin-card-body" style="padding:0;">
+        ${recentInterests.length ? recentInterests.map(i => `
+          <div style="padding:12px 20px;border-bottom:1px solid #F5EFE7;display:flex;align-items:center;gap:12px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:${i.read?'var(--cream-dark)':'var(--crimson)'};flex-shrink:0;"></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.85rem;font-weight:600;color:var(--brown-deep);">${Utils.escapeHtml(i.name)}</div>
+              <div style="font-size:0.76rem;color:var(--text-light);">${Utils.escapeHtml(i.venueName)} · ${i.eventType || 'Event'}</div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--text-light);flex-shrink:0;">${Utils.formatDate(i.date)}</div>
+          </div>`).join('')
+        : '<div class="empty-state" style="padding:32px;"><i class="fas fa-inbox"></i><p>No requests yet</p></div>'}
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3>Venue Registrations</h3>
+        <button class="btn btn-sm" style="color:var(--crimson);font-size:0.78rem;" onclick="switchTab('registrations')">View All</button>
+      </div>
+      <div class="admin-card-body" style="padding:0;">
+        ${recentRegs.length ? recentRegs.map(r => `
+          <div style="padding:12px 20px;border-bottom:1px solid #F5EFE7;display:flex;align-items:center;gap:12px;">
+            <span class="badge badge-${r.status==='pending'?'crimson':r.status==='approved'?'green':'blue'}">${r.status}</span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.85rem;font-weight:600;color:var(--brown-deep);">${Utils.escapeHtml(r.venueName)}</div>
+              <div style="font-size:0.76rem;color:var(--text-light);">${Utils.escapeHtml(r.city)} · ${Utils.typeLabel(r.venueType)}</div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--text-light);flex-shrink:0;">${Utils.formatDate(r.date)}</div>
+          </div>`).join('')
+        : '<div class="empty-state" style="padding:32px;"><i class="fas fa-inbox"></i><p>No registrations yet</p></div>'}
+      </div>
+    </div>`;
+}
+
+/* ── Venue Table ── */
+function renderVenueTable() {
+  const query  = (document.getElementById('venueSearch')?.value || '').toLowerCase();
+  const venues = VenueDB.all().filter(v => !query || v.name.toLowerCase().includes(query) || v.city.toLowerCase().includes(query));
+  const tbody  = document.getElementById('venueTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = venues.length ? venues.map(v => `
+    <tr>
+      <td><img src="${v.photos?.[0] || ''}" class="table-venue-img" alt="${Utils.escapeHtml(v.name)}"></td>
+      <td style="font-weight:600;color:var(--brown-deep);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${Utils.escapeHtml(v.name)}</td>
+      <td><span class="badge badge-gold">${Utils.typeLabel(v.type)}</span></td>
+      <td>${Utils.escapeHtml(v.city)}</td>
+      <td>${v.capacity.toLocaleString()}</td>
+      <td>${Utils.formatPrice(v.price)}</td>
+      <td><i class="fas fa-star" style="color:#F59E0B;"></i> ${v.rating ? v.rating.toFixed(1) : '—'}</td>
+      <td>${v.featured ? '<span class="badge badge-crimson"><i class="fas fa-check"></i> Yes</span>' : '<span style="color:var(--text-light);font-size:0.8rem;">No</span>'}</td>
+      <td>
+        <div class="table-actions">
+          <button class="action-btn action-btn-edit" onclick="editVenue('${v.id}')">Edit</button>
+          <a href="venue-detail.html?id=${v.id}" target="_blank" class="action-btn" style="background:#F0FFF4;color:#2E7D32;border:1px solid #A8D5B5;">View</a>
+          <button class="action-btn action-btn-delete" onclick="deleteVenue('${v.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('') : `<tr><td colspan="9"><div class="empty-state"><i class="fas fa-building"></i><p>No venues found</p></div></td></tr>`;
+}
+
+/* ── Save Venue ── */
+function saveVenue(e) {
+  e.preventDefault();
+  const id = document.getElementById('f_id').value;
+  // Collect URL photos
+  const urlLines = document.getElementById('f_photoUrls').value.split('\n').map(l => l.trim()).filter(l => l.startsWith('http'));
+  const photos   = [...urlLines, ...uploadedPhotoDataUrls].slice(0, 8);
+  if (photos.length === 0) photos.push('https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80');
+
+  const data = {
+    name:        document.getElementById('f_name').value,
+    type:        document.getElementById('f_type').value,
+    capacity:    Number(document.getElementById('f_capacity').value),
+    city:        document.getElementById('f_city').value,
+    area:        document.getElementById('f_area').value,
+    address:     document.getElementById('f_address').value,
+    price:       Number(document.getElementById('f_price').value),
+    priceUnit:   'day',
+    phone:       document.getElementById('f_phone').value,
+    email:       document.getElementById('f_email').value,
+    description: document.getElementById('f_description').value,
+    amenities:   document.getElementById('f_amenities').value.split(',').map(s => s.trim()).filter(Boolean),
+    photos:      photos,
+    featured:    document.getElementById('f_featured').checked,
+    approved:    true,
+    rating:      parseFloat(document.getElementById('f_rating').value) || 0,
+    reviewCount: 0,
+    tags:        document.getElementById('f_featured').checked ? ['Featured'] : [],
+  };
+
+  if (id) {
+    VenueDB.update(id, data);
+    showToast('Venue updated successfully!', 'success');
+  } else {
+    VenueDB.add(data);
+    showToast('Venue added successfully!', 'success');
+  }
+  resetVenueForm();
+  switchTab('venues');
+}
+
+function editVenue(id) {
+  const v = VenueDB.byId(id);
+  if (!v) return;
+  document.getElementById('f_id').value          = v.id;
+  document.getElementById('f_name').value        = v.name;
+  document.getElementById('f_type').value        = v.type;
+  document.getElementById('f_capacity').value    = v.capacity;
+  document.getElementById('f_city').value        = v.city;
+  document.getElementById('f_area').value        = v.area;
+  document.getElementById('f_address').value     = v.address;
+  document.getElementById('f_price').value       = v.price;
+  document.getElementById('f_phone').value       = v.phone;
+  document.getElementById('f_email').value       = v.email;
+  document.getElementById('f_rating').value      = v.rating;
+  document.getElementById('f_description').value = v.description;
+  document.getElementById('f_amenities').value   = (v.amenities || []).join(', ');
+  document.getElementById('f_photoUrls').value   = (v.photos || []).filter(p => p.startsWith('http')).join('\n');
+  document.getElementById('f_featured').checked  = !!v.featured;
+  document.getElementById('venueFormTitle').innerHTML = '<i class="fas fa-edit" style="color:var(--gold-dark);margin-right:8px;"></i>Edit Venue';
+  document.getElementById('saveVenueBtnText').textContent = 'Update Venue';
+  switchTab('add-venue');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetVenueForm() {
+  document.getElementById('venueForm').reset();
+  document.getElementById('f_id').value = '';
+  document.getElementById('venueFormTitle').innerHTML = '<i class="fas fa-plus-circle" style="color:var(--gold-dark);margin-right:8px;"></i>Add New Venue';
+  document.getElementById('saveVenueBtnText').textContent = 'Save Venue';
+  document.getElementById('photoPreviewGrid').innerHTML = '';
+  uploadedPhotoDataUrls = [];
+}
+
+function deleteVenue(id) {
+  pendingDeleteId = id;
+  openModal('deleteModal');
+}
+function confirmDelete() {
+  if (pendingDeleteId) {
+    VenueDB.delete(pendingDeleteId);
+    pendingDeleteId = null;
+    closeModal('deleteModal');
+    showToast('Venue deleted.', 'success');
+    renderVenueTable();
+    updateBadges();
+  }
+}
+
+/* ── Photo Upload ── */
+function handlePhotoUpload(event) {
+  processPhotoFiles(event.target.files);
+}
+function handlePhotoDrop(event) {
+  event.preventDefault();
+  document.getElementById('photoUploadArea').classList.remove('dragover');
+  processPhotoFiles(event.dataTransfer.files);
+}
+function processPhotoFiles(files) {
+  const remaining = 5 - uploadedPhotoDataUrls.length;
+  Array.from(files).slice(0, remaining).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      uploadedPhotoDataUrls.push(e.target.result);
+      renderPhotoPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderPhotoPreview() {
+  const grid = document.getElementById('photoPreviewGrid');
+  grid.innerHTML = uploadedPhotoDataUrls.map((url, i) => `
+    <div class="photo-preview-item">
+      <img src="${url}" alt="Photo ${i+1}">
+      <button class="photo-preview-remove" onclick="removePhoto(${i})"><i class="fas fa-times"></i></button>
+    </div>`).join('');
+}
+function removePhoto(i) {
+  uploadedPhotoDataUrls.splice(i, 1);
+  renderPhotoPreview();
+}
+
+/* ── Interest Table ── */
+function renderInterestTable() {
+  const interests = InterestDB.all();
+  const tbody     = document.getElementById('interestTableBody');
+  tbody.innerHTML = interests.length ? interests.map(i => `
+    <tr>
+      <td style="white-space:nowrap;">${Utils.formatDate(i.date)}</td>
+      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${Utils.escapeHtml(i.venueName)}</td>
+      <td style="font-weight:600;">${Utils.escapeHtml(i.name)}</td>
+      <td><a href="tel:${i.phone}" style="color:var(--crimson);">${i.phone}</a></td>
+      <td>${i.eventType || '—'}</td>
+      <td>${i.guests || '—'}</td>
+      <td>${i.date ? Utils.formatDate(i.date) : '—'}</td>
+      <td>
+        <div class="table-actions">
+          ${!i.read ? `<button class="action-btn action-btn-approve" onclick="markInterestRead('${i.id}')">Mark Read</button>` : '<span style="color:var(--text-light);font-size:0.75rem;">Read</span>'}
+          <button class="action-btn action-btn-delete" onclick="deleteInterest('${i.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('')
+  : `<tr><td colspan="8"><div class="empty-state" style="padding:40px;"><i class="fas fa-heart"></i><p>No interest requests yet</p></div></td></tr>`;
+}
+function markInterestRead(id) { InterestDB.markRead(id); updateBadges(); renderInterestTable(); }
+function deleteInterest(id)   { InterestDB.delete(id);   updateBadges(); renderInterestTable(); showToast('Deleted.'); }
+
+/* ── Contact Table ── */
+function renderContactTable() {
+  const msgs  = ContactDB.all();
+  const tbody = document.getElementById('contactTableBody');
+  tbody.innerHTML = msgs.length ? msgs.map(m => `
+    <tr>
+      <td style="white-space:nowrap;">${Utils.formatDate(m.date)}</td>
+      <td style="font-weight:600;">${Utils.escapeHtml(m.name)}</td>
+      <td><a href="mailto:${m.email}" style="color:var(--crimson);">${Utils.escapeHtml(m.email)}</a></td>
+      <td>${m.phone || '—'}</td>
+      <td>${Utils.escapeHtml(m.subject || '—')}</td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${Utils.escapeHtml(m.message)}</td>
+      <td><button class="action-btn action-btn-delete" onclick="deleteContact('${m.id}')">Delete</button></td>
+    </tr>`).join('')
+  : `<tr><td colspan="7"><div class="empty-state" style="padding:40px;"><i class="fas fa-envelope"></i><p>No messages yet</p></div></td></tr>`;
+}
+function deleteContact(id) { ContactDB.delete(id); updateBadges(); renderContactTable(); showToast('Deleted.'); }
+
+/* ── Registration Table ── */
+function renderRegTable() {
+  const regs  = RegistrationDB.all();
+  const tbody = document.getElementById('regTableBody');
+  tbody.innerHTML = regs.length ? regs.map(r => `
+    <tr>
+      <td style="white-space:nowrap;">${Utils.formatDate(r.date)}</td>
+      <td style="font-weight:600;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${Utils.escapeHtml(r.venueName)}</td>
+      <td><span class="badge badge-gold">${Utils.typeLabel(r.venueType)}</span></td>
+      <td>${Utils.escapeHtml(r.city)}</td>
+      <td>${Utils.escapeHtml(r.contactName)}</td>
+      <td><a href="tel:${r.phone}" style="color:var(--crimson);">${r.phone}</a></td>
+      <td>${Number(r.capacity).toLocaleString()}</td>
+      <td><span class="badge badge-${r.status==='pending'?'crimson':r.status==='approved'?'green':'blue'}">${r.status}</span></td>
+      <td>
+        <div class="table-actions">
+          <button class="action-btn" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;" onclick="viewRegDetail('${r.id}')">Details</button>
+          ${r.status === 'pending' ? `
+            <button class="action-btn action-btn-approve" onclick="approveReg('${r.id}')">Approve</button>
+            <button class="action-btn action-btn-delete" onclick="rejectReg('${r.id}')">Reject</button>` : ''}
+          <button class="action-btn action-btn-delete" onclick="deleteReg('${r.id}')">Del</button>
+        </div>
+      </td>
+    </tr>`).join('')
+  : `<tr><td colspan="9"><div class="empty-state" style="padding:40px;"><i class="fas fa-clipboard-list"></i><p>No registration requests yet</p></div></td></tr>`;
+}
+
+function approveReg(id) {
+  RegistrationDB.approve(id);
+  updateBadges(); renderRegTable(); renderDashboard();
+  showToast('Venue approved and added to listings!', 'success');
+}
+function rejectReg(id) {
+  RegistrationDB.reject(id);
+  updateBadges(); renderRegTable();
+  showToast('Registration rejected.', 'error');
+}
+function deleteReg(id) {
+  RegistrationDB.delete(id);
+  updateBadges(); renderRegTable();
+  showToast('Deleted.');
+}
+function viewRegDetail(id) {
+  const r = RegistrationDB.all().find(reg => reg.id === id);
+  if (!r) return;
+  document.getElementById('regDetailBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+      <div><div class="admin-label">Venue Name</div><div style="font-weight:600;">${Utils.escapeHtml(r.venueName)}</div></div>
+      <div><div class="admin-label">Type</div><div>${Utils.typeLabel(r.venueType)}</div></div>
+      <div><div class="admin-label">City</div><div>${Utils.escapeHtml(r.city)}</div></div>
+      <div><div class="admin-label">Area</div><div>${Utils.escapeHtml(r.area)}</div></div>
+      <div><div class="admin-label">Capacity</div><div>${Number(r.capacity).toLocaleString()} guests</div></div>
+      <div><div class="admin-label">Price/Day</div><div>${Utils.formatPrice(Number(r.price))}</div></div>
+      <div class="full-width" style="grid-column:1/-1;"><div class="admin-label">Address</div><div>${Utils.escapeHtml(r.address)}</div></div>
+      <div class="full-width" style="grid-column:1/-1;"><div class="admin-label">Description</div><div style="font-size:0.85rem;line-height:1.6;">${Utils.escapeHtml(r.description)}</div></div>
+      <div class="full-width" style="grid-column:1/-1;"><div class="admin-label">Amenities</div><div style="font-size:0.85rem;">${Utils.escapeHtml(r.amenities || '—')}</div></div>
+      <div><div class="admin-label">Contact</div><div>${Utils.escapeHtml(r.contactName)}</div></div>
+      <div><div class="admin-label">Designation</div><div>${Utils.escapeHtml(r.designation || '—')}</div></div>
+      <div><div class="admin-label">Phone</div><div><a href="tel:${r.phone}" style="color:var(--crimson);">${r.phone}</a></div></div>
+      <div><div class="admin-label">Email</div><div><a href="mailto:${r.email}" style="color:var(--crimson);">${Utils.escapeHtml(r.email)}</a></div></div>
+    </div>
+    ${r.status === 'pending' ? `
+    <div style="display:flex;gap:12px;border-top:1px solid var(--cream-dark);padding-top:20px;">
+      <button class="btn btn-primary" onclick="approveReg('${r.id}');closeModal('regDetailModal')">
+        <i class="fas fa-check"></i> Approve & Add to Listings
+      </button>
+      <button class="btn btn-outline" style="color:var(--crimson);border-color:var(--crimson);" onclick="rejectReg('${r.id}');closeModal('regDetailModal')">
+        Reject
+      </button>
+    </div>` : `<p class="badge badge-${r.status==='approved'?'green':'blue'}" style="font-size:0.85rem;">Status: ${r.status}</p>`}`;
+  openModal('regDetailModal');
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  if (AdminAuth.isLoggedIn()) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadAdminPanel();
+  }
+});
+</script>
+</body>
+</html>

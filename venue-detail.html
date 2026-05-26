@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venue Detail – Utsavam</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .mobile-interest-btn {
+      display: none; position: fixed; bottom: 20px; left: 0; right: 0; padding: 0 16px; z-index: 100;
+    }
+    @media(max-width:480px){ .mobile-interest-btn { display: block; } }
+    .gallery-nav-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(0,0,0,0.5); color: #fff; width: 40px; height: 40px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; z-index: 2; border: none; transition: all 0.2s;
+    }
+    .gallery-nav-btn:hover { background: rgba(178,34,34,0.8); }
+    .gallery-nav-btn.prev { left: 12px; }
+    .gallery-nav-btn.next { right: 12px; }
+    .share-btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
+      border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;
+      border: 1px solid var(--cream-dark); color: var(--text-secondary);
+      cursor: pointer; transition: var(--transition); background: #fff;
+    }
+    .share-btn:hover { border-color: var(--gold); color: var(--gold-dark); }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon"><i class="fas fa-om"></i></div>
+      <span class="logo-text">Utsa<span>vam</span></span>
+    </a>
+    <div class="navbar-links">
+      <a href="index.html"           class="nav-link">Home</a>
+      <a href="venues.html"          class="nav-link">Browse Venues</a>
+      <a href="register-venue.html"  class="nav-link">List Your Venue</a>
+      <a href="contact.html"         class="nav-link">Contact</a>
+    </div>
+    <div class="navbar-cta">
+      <a href="register-venue.html" class="btn btn-nav btn-nav-outline">List Venue</a>
+      <a href="admin.html"          class="btn btn-nav btn-nav-primary">Admin</a>
+    </div>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"          class="nav-link">Home</a>
+  <a href="venues.html"         class="nav-link">Browse Venues</a>
+  <a href="register-venue.html" class="nav-link">List Your Venue</a>
+  <a href="contact.html"        class="nav-link">Contact Us</a>
+</div>
+
+<!-- PAGE HERO (dynamic) -->
+<section class="page-hero" id="pageHero" style="padding-bottom:30px;">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <i class="fas fa-chevron-right"></i>
+      <a href="venues.html">Browse Venues</a>
+      <i class="fas fa-chevron-right"></i>
+      <span id="heroVenueName">Loading…</span>
+    </div>
+  </div>
+</section>
+
+<!-- DETAIL LAYOUT -->
+<div class="container">
+  <div class="venue-detail-layout" id="detailLayout">
+    <!-- JS populated -->
+    <div style="grid-column:1/-1;text-align:center;padding:80px 0;">
+      <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--gold-dark);"></i>
+      <p style="margin-top:12px;color:var(--text-light);">Loading venue details…</p>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Interest Button -->
+<div class="mobile-interest-btn">
+  <button class="btn btn-primary btn-full btn-lg" onclick="openModal('interestModal')">
+    <i class="fas fa-heart"></i> Express Interest
+  </button>
+</div>
+
+<!-- ── Interest Modal ── -->
+<div class="modal-overlay" id="interestModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3 style="margin-bottom:4px;">Express Your Interest</h3>
+        <p style="font-size:0.83rem;color:var(--text-light);">Fill in your details and the venue will contact you.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('interestModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="interestForm" onsubmit="submitInterest(event)">
+      <div class="form-row mb-16">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="admin-label">Your Name *</label>
+          <input type="text" class="form-control" id="int_name" required placeholder="Full name">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="admin-label">Phone Number *</label>
+          <input type="tel" class="form-control" id="int_phone" required placeholder="+91 98765 43210">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="admin-label">Email Address *</label>
+        <input type="email" class="form-control" id="int_email" required placeholder="you@email.com">
+      </div>
+      <div class="form-row mb-16">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="admin-label">Event Type *</label>
+          <select class="form-control" id="int_eventType" required>
+            <option value="">Select event type</option>
+            <option>Wedding</option>
+            <option>Reception</option>
+            <option>Birthday Party</option>
+            <option>Corporate Event</option>
+            <option>Conference</option>
+            <option>Engagement</option>
+            <option>Baby Shower</option>
+            <option>Anniversary</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="admin-label">Expected Guests *</label>
+          <input type="number" class="form-control" id="int_guests" required placeholder="e.g. 300" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="admin-label">Preferred Date</label>
+        <input type="date" class="form-control" id="int_date">
+      </div>
+      <div class="form-group">
+        <label class="admin-label">Message / Special Requirements</label>
+        <textarea class="form-control" id="int_message" rows="3" placeholder="Tell us more about your event…"></textarea>
+      </div>
+      <input type="hidden" id="int_venueId">
+      <input type="hidden" id="int_venueName">
+      <button type="submit" class="btn btn-primary btn-full btn-lg mt-8">
+        <i class="fas fa-paper-plane"></i> Submit Interest
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- SIMILAR VENUES -->
+<section class="section-sm" style="background:var(--cream-dark);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:32px;">
+      <h3>Similar Venues You Might Like</h3>
+    </div>
+    <div class="venues-grid" id="similarVenues"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-text">Utsa<span>vam</span></div>
+        <p>India's most trusted event venue aggregator.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <div class="footer-links">
+          <a href="index.html"           class="footer-link"><i class="fas fa-chevron-right"></i> Home</a>
+          <a href="venues.html"          class="footer-link"><i class="fas fa-chevron-right"></i> Browse Venues</a>
+          <a href="contact.html"         class="footer-link"><i class="fas fa-chevron-right"></i> Contact Us</a>
+          <a href="register-venue.html"  class="footer-link"><i class="fas fa-chevron-right"></i> List Your Venue</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Venue Types</h5>
+        <div class="footer-links">
+          <a href="venues.html?type=wedding_hall"      class="footer-link"><i class="fas fa-chevron-right"></i> Wedding Halls</a>
+          <a href="venues.html?type=convention_center" class="footer-link"><i class="fas fa-chevron-right"></i> Convention Centres</a>
+          <a href="venues.html?type=farm_house"        class="footer-link"><i class="fas fa-chevron-right"></i> Farm Houses</a>
+          <a href="venues.html?type=resort"            class="footer-link"><i class="fas fa-chevron-right"></i> Resorts</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <div class="footer-links">
+          <span class="footer-link"><i class="fas fa-phone"></i> +91 99999 00000</span>
+          <span class="footer-link"><i class="fas fa-envelope"></i> hello@utsavam.in</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-bottom">
+      <p>© 2024 Utsavam. All rights reserved.</p>
+      <p class="made-with">Made with <i class="fas fa-heart"></i> for every celebration</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script>
+let currentVenue = null;
+let currentPhotoIndex = 0;
+
+function setMainPhoto(idx) {
+  if (!currentVenue) return;
+  currentPhotoIndex = (idx + currentVenue.photos.length) % currentVenue.photos.length;
+  const img = document.getElementById('mainPhoto');
+  if (img) { img.style.opacity = '0'; setTimeout(() => { img.src = currentVenue.photos[currentPhotoIndex]; img.style.opacity = '1'; }, 150); }
+  document.querySelectorAll('.gallery-thumb').forEach((t, i) => t.classList.toggle('active', i === currentPhotoIndex));
+}
+
+function buildDetail(venue) {
+  currentVenue = venue;
+  document.title = venue.name + ' – Utsavam';
+  document.getElementById('heroVenueName').textContent = venue.name;
+
+  const layout = document.getElementById('detailLayout');
+  layout.innerHTML = `
+    <!-- MAIN CONTENT -->
+    <div class="venue-detail-main">
+      <!-- Gallery -->
+      <div class="gallery-container">
+        <div class="gallery-main">
+          <img id="mainPhoto" src="${venue.photos[0]}" alt="${Utils.escapeHtml(venue.name)}"
+               style="transition:opacity 0.15s;width:100%;height:100%;object-fit:cover;">
+          <button class="gallery-nav-btn prev" onclick="setMainPhoto(${-1} + currentPhotoIndex)"><i class="fas fa-chevron-left"></i></button>
+          <button class="gallery-nav-btn next" onclick="setMainPhoto(${1} + currentPhotoIndex)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        ${venue.photos.length > 1 ? `
+        <div class="gallery-thumbs">
+          ${venue.photos.map((p,i) => `
+            <div class="gallery-thumb ${i===0?'active':''}" onclick="setMainPhoto(${i})">
+              <img src="${p}" alt="Photo ${i+1}" loading="lazy">
+            </div>`).join('')}
+        </div>` : ''}
+      </div>
+
+      <!-- Header -->
+      <div class="venue-detail-header">
+        <div class="flex-between" style="flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+          <div>
+            <div class="venue-detail-type">
+              <i class="fas ${Utils.typeIcon(venue.type)}"></i> ${Utils.typeLabel(venue.type)}
+            </div>
+            <h1 class="venue-detail-name">${Utils.escapeHtml(venue.name)}</h1>
+          </div>
+          <div class="flex gap-8">
+            <button class="share-btn" onclick="copyLink()"><i class="fas fa-share-alt"></i> Share</button>
+          </div>
+        </div>
+        <div class="venue-detail-meta">
+          <div class="venue-detail-meta-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>${Utils.escapeHtml(venue.area)}, ${Utils.escapeHtml(venue.city)}</span>
+          </div>
+          <div class="venue-detail-meta-item">
+            <i class="fas fa-users"></i>
+            <span>Up to ${venue.capacity.toLocaleString()} guests</span>
+          </div>
+          <div class="venue-detail-meta-item">
+            <i class="fas fa-star" style="color:#F59E0B;"></i>
+            <span>${venue.rating.toFixed(1)} <span style="color:var(--text-light);">(${venue.reviewCount} reviews)</span></span>
+          </div>
+        </div>
+        <div class="flex gap-8 flex-wrap">
+          ${venue.tags.map(t => `<span class="badge badge-gold"><i class="fas fa-certificate"></i> ${t}</span>`).join('')}
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="detail-section">
+        <h3>About This Venue</h3>
+        <p>${Utils.escapeHtml(venue.description)}</p>
+      </div>
+
+      <!-- Amenities -->
+      <div class="detail-section">
+        <h3>Amenities & Features</h3>
+        <div class="amenities-grid">
+          ${venue.amenities.map(a => `
+            <span class="amenity-tag"><i class="fas fa-check-circle"></i> ${Utils.escapeHtml(a)}</span>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Pricing & Capacity -->
+      <div class="detail-section">
+        <h3>Pricing & Capacity</h3>
+        <div class="highlight-box">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;">
+            <div>
+              <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Price</div>
+              <div style="font-family:var(--font-heading);font-size:1.6rem;color:var(--crimson);font-weight:700;">${Utils.formatPrice(venue.price)}</div>
+              <div style="font-size:0.78rem;color:var(--text-light);">per ${venue.priceUnit}</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Max Capacity</div>
+              <div style="font-family:var(--font-heading);font-size:1.6rem;color:var(--brown-deep);font-weight:700;">${venue.capacity.toLocaleString()}</div>
+              <div style="font-size:0.78rem;color:var(--text-light);">guests</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Location</div>
+              <div style="font-size:1rem;color:var(--brown-dark);font-weight:600;margin-top:4px;">${Utils.escapeHtml(venue.city)}</div>
+              <div style="font-size:0.78rem;color:var(--text-light);">${Utils.escapeHtml(venue.area)}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address & Contact -->
+      <div class="detail-section">
+        <h3>Location & Contact</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="contact-cards">
+          <div class="contact-card">
+            <div class="contact-card-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <h5>Address</h5>
+              <p>${Utils.escapeHtml(venue.address)}</p>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-card-icon gold"><i class="fas fa-phone"></i></div>
+            <div>
+              <h5>Phone</h5>
+              <p><a href="tel:${venue.phone}" style="color:var(--crimson);font-weight:600;">${venue.phone}</a></p>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-card-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <h5>Email</h5>
+              <p><a href="mailto:${venue.email}" style="color:var(--crimson);">${Utils.escapeHtml(venue.email)}</a></p>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-card-icon gold"><i class="fas fa-star"></i></div>
+            <div>
+              <h5>Rating</h5>
+              <p>${venue.rating.toFixed(1)} / 5.0 &nbsp; <span style="color:#F59E0B;">${'★'.repeat(Math.round(venue.rating))}</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="venue-detail-sidebar">
+      <div class="booking-card">
+        <div class="booking-card-price">${Utils.formatPrice(venue.price)} <span>/ ${venue.priceUnit}</span></div>
+        <p style="font-size:0.8rem;color:var(--text-light);margin-bottom:4px;">
+          <i class="fas fa-users" style="color:var(--gold-dark);"></i> Up to ${venue.capacity.toLocaleString()} guests &nbsp;·&nbsp;
+          <i class="fas fa-star" style="color:#F59E0B;"></i> ${venue.rating.toFixed(1)}
+        </p>
+        <div class="divider-line"></div>
+        <form class="booking-form" onsubmit="submitQuickInterest(event)">
+          <div class="form-group">
+            <label class="admin-label">Your Name *</label>
+            <input type="text" class="form-control" id="si_name" required placeholder="Full name">
+          </div>
+          <div class="form-group">
+            <label class="admin-label">Phone *</label>
+            <input type="tel" class="form-control" id="si_phone" required placeholder="+91 98765 43210">
+          </div>
+          <div class="form-group">
+            <label class="admin-label">Event Date</label>
+            <input type="date" class="form-control" id="si_date">
+          </div>
+          <div class="form-group">
+            <label class="admin-label">Event Type</label>
+            <select class="form-control" id="si_type">
+              <option>Wedding</option>
+              <option>Reception</option>
+              <option>Birthday Party</option>
+              <option>Corporate Event</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full mt-8">
+            <i class="fas fa-heart"></i> Express Interest
+          </button>
+        </form>
+        <div class="divider-line"></div>
+        <div style="text-align:center;">
+          <a href="tel:${venue.phone}" class="btn btn-outline-gold btn-full">
+            <i class="fas fa-phone"></i> Call Venue Directly
+          </a>
+        </div>
+        <p style="text-align:center;font-size:0.75rem;color:var(--text-light);margin-top:12px;">
+          <i class="fas fa-shield-alt"></i> Your details are kept private and shared only with this venue.
+        </p>
+      </div>
+    </aside>
+  `;
+
+  // Populate hidden modal fields
+  document.getElementById('int_venueId').value   = venue.id;
+  document.getElementById('int_venueName').value = venue.name;
+}
+
+function submitInterest(e) {
+  e.preventDefault();
+  const interest = {
+    venueId:   document.getElementById('int_venueId').value,
+    venueName: document.getElementById('int_venueName').value,
+    name:      document.getElementById('int_name').value,
+    phone:     document.getElementById('int_phone').value,
+    email:     document.getElementById('int_email').value,
+    eventType: document.getElementById('int_eventType').value,
+    guests:    document.getElementById('int_guests').value,
+    date:      document.getElementById('int_date').value,
+    message:   document.getElementById('int_message').value,
+  };
+  InterestDB.add(interest);
+  closeModal('interestModal');
+  document.getElementById('interestForm').reset();
+  showToast('Interest submitted! The venue team will contact you soon.', 'success');
+}
+
+function submitQuickInterest(e) {
+  e.preventDefault();
+  if (!currentVenue) return;
+  const interest = {
+    venueId:   currentVenue.id,
+    venueName: currentVenue.name,
+    name:      document.getElementById('si_name').value,
+    phone:     document.getElementById('si_phone').value,
+    email:     '',
+    eventType: document.getElementById('si_type').value,
+    guests:    '',
+    date:      document.getElementById('si_date').value,
+    message:   '',
+  };
+  InterestDB.add(interest);
+  showToast('Interest submitted! The venue team will contact you soon.', 'success');
+  e.target.reset();
+}
+
+function copyLink() {
+  navigator.clipboard?.writeText(window.location.href).then(() => {
+    showToast('Link copied to clipboard!', 'success');
+  }).catch(() => {
+    showToast('Could not copy link.', 'error');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const id = Utils.getQueryParam('id');
+  if (!id) { window.location.href = 'venues.html'; return; }
+
+  const venue = VenueDB.byId(id);
+  if (!venue) {
+    document.getElementById('detailLayout').innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:80px 0;">
+        <i class="fas fa-exclamation-triangle" style="font-size:3rem;color:var(--gold-dark);margin-bottom:16px;display:block;"></i>
+        <h2>Venue Not Found</h2>
+        <p style="margin:12px 0 24px;">This venue may have been removed or the link is incorrect.</p>
+        <a href="venues.html" class="btn btn-primary">Browse All Venues</a>
+      </div>`;
+    return;
+  }
+
+  buildDetail(venue);
+
+  // Similar venues
+  const similar = VenueDB.approved()
+    .filter(v => v.id !== venue.id && v.type === venue.type)
+    .slice(0, 3);
+  const simGrid = document.getElementById('similarVenues');
+  if (simGrid) {
+    simGrid.innerHTML = similar.length
+      ? similar.map(v => Utils.venueCardHTML(v)).join('')
+      : '<p style="text-align:center;color:var(--text-light);">No similar venues found.</p>';
+  }
+});
+</script>
+</body>
+</html>

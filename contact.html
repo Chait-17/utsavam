@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us – Utsavam</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon"><i class="fas fa-om"></i></div>
+      <span class="logo-text">Utsa<span>vam</span></span>
+    </a>
+    <div class="navbar-links">
+      <a href="index.html"           class="nav-link">Home</a>
+      <a href="venues.html"          class="nav-link">Browse Venues</a>
+      <a href="register-venue.html"  class="nav-link">List Your Venue</a>
+      <a href="contact.html"         class="nav-link active">Contact</a>
+    </div>
+    <div class="navbar-cta">
+      <a href="register-venue.html" class="btn btn-nav btn-nav-outline">List Venue</a>
+      <a href="admin.html"          class="btn btn-nav btn-nav-primary">Admin</a>
+    </div>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"          class="nav-link">Home</a>
+  <a href="venues.html"         class="nav-link">Browse Venues</a>
+  <a href="register-venue.html" class="nav-link">List Your Venue</a>
+  <a href="contact.html"        class="nav-link">Contact Us</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <i class="fas fa-chevron-right"></i>
+      <span>Contact Us</span>
+    </div>
+    <h1>Get in Touch</h1>
+    <p>Have a question or need help finding the right venue? Our team is here for you.</p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="contact-layout">
+
+    <!-- Info Side -->
+    <div class="contact-info">
+      <h3>We're Here to Help</h3>
+      <p>Whether you're looking for the perfect venue for your wedding, planning a corporate conference, or need guidance choosing between options — our team of event venue experts is ready to assist.</p>
+
+      <div class="contact-cards">
+        <div class="contact-card">
+          <div class="contact-card-icon"><i class="fas fa-phone-alt"></i></div>
+          <div>
+            <h5>Phone</h5>
+            <p><a href="tel:+919999900000" style="color:var(--crimson);font-weight:600;">+91 99999 00000</a></p>
+            <p style="font-size:0.75rem;margin-top:2px;">Mon – Sat, 9 AM – 7 PM IST</p>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon gold"><i class="fas fa-envelope"></i></div>
+          <div>
+            <h5>Email</h5>
+            <p><a href="mailto:hello@utsavam.in" style="color:var(--crimson);">hello@utsavam.in</a></p>
+            <p style="font-size:0.75rem;margin-top:2px;">We reply within 24 hours</p>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div>
+            <h5>Office</h5>
+            <p>Jubilee Hills, Hyderabad – 500033</p>
+            <p style="font-size:0.75rem;margin-top:2px;">Telangana, India</p>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon gold"><i class="fab fa-whatsapp"></i></div>
+          <div>
+            <h5>WhatsApp</h5>
+            <p><a href="https://wa.me/919999900000" target="_blank" style="color:var(--crimson);">Chat with Us</a></p>
+            <p style="font-size:0.75rem;margin-top:2px;">Quick responses on WhatsApp</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-box mt-32">
+        <h4 style="margin-bottom:8px;color:var(--brown-deep);">Are You a Venue Owner?</h4>
+        <p style="font-size:0.85rem;margin-bottom:16px;">List your venue on Utsavam for free and reach thousands of event planners every month.</p>
+        <a href="register-venue.html" class="btn btn-gold">
+          <i class="fas fa-plus-circle"></i> List Your Venue
+        </a>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="contact-form-card">
+      <h3>Send Us a Message</h3>
+      <div id="contactSuccess" class="alert alert-success" style="display:none;">
+        <i class="fas fa-check-circle"></i>
+        <div><strong>Message sent!</strong> We'll get back to you within 24 hours.</div>
+      </div>
+      <form id="contactForm" onsubmit="submitContact(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="admin-label">First Name *</label>
+            <input type="text" class="form-control" id="c_fname" required placeholder="Ramesh">
+          </div>
+          <div class="form-group">
+            <label class="admin-label">Last Name *</label>
+            <input type="text" class="form-control" id="c_lname" required placeholder="Kumar">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="admin-label">Email Address *</label>
+          <input type="email" class="form-control" id="c_email" required placeholder="ramesh@email.com">
+        </div>
+        <div class="form-group">
+          <label class="admin-label">Phone Number</label>
+          <input type="tel" class="form-control" id="c_phone" placeholder="+91 98765 43210">
+        </div>
+        <div class="form-group">
+          <label class="admin-label">Subject *</label>
+          <select class="form-control" id="c_subject" required>
+            <option value="">Select a topic</option>
+            <option>Looking for a Wedding Venue</option>
+            <option>Looking for a Convention Centre</option>
+            <option>Looking for a Party Hall</option>
+            <option>Looking for a Farm House / Resort</option>
+            <option>Want to List My Venue</option>
+            <option>Partnership / Business Enquiry</option>
+            <option>Technical Support</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="admin-label">Message *</label>
+          <textarea class="form-control" id="c_message" rows="5" required placeholder="Tell us how we can help you…"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full btn-lg">
+          <i class="fas fa-paper-plane"></i> Send Message
+        </button>
+        <p style="text-align:center;font-size:0.75rem;color:var(--text-light);margin-top:12px;">
+          <i class="fas fa-lock"></i> Your information is kept secure and never shared.
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<section class="section-sm" style="background:var(--cream-dark);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:32px;">
+      <span class="eyebrow">Common Questions</span>
+      <h2>Frequently Asked Questions</h2>
+    </div>
+    <div style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px;" id="faqList">
+      <!-- JS populated -->
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-text">Utsa<span>vam</span></div>
+        <p>India's most trusted event venue aggregator.</p>
+        <div class="social-links">
+          <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Explore</h5>
+        <div class="footer-links">
+          <a href="venues.html?type=wedding_hall"      class="footer-link"><i class="fas fa-chevron-right"></i> Wedding Halls</a>
+          <a href="venues.html?type=convention_center" class="footer-link"><i class="fas fa-chevron-right"></i> Convention Centres</a>
+          <a href="venues.html?type=farm_house"        class="footer-link"><i class="fas fa-chevron-right"></i> Farm Houses</a>
+          <a href="venues.html?type=party_hall"        class="footer-link"><i class="fas fa-chevron-right"></i> Party Halls</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <div class="footer-links">
+          <a href="index.html"           class="footer-link"><i class="fas fa-chevron-right"></i> Home</a>
+          <a href="register-venue.html"  class="footer-link"><i class="fas fa-chevron-right"></i> List Your Venue</a>
+          <a href="contact.html"         class="footer-link"><i class="fas fa-chevron-right"></i> Contact Us</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <div class="footer-links">
+          <span class="footer-link"><i class="fas fa-phone"></i> +91 99999 00000</span>
+          <span class="footer-link"><i class="fas fa-envelope"></i> hello@utsavam.in</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-bottom">
+      <p>© 2024 Utsavam. All rights reserved.</p>
+      <p class="made-with">Made with <i class="fas fa-heart"></i> for every celebration</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script>
+function submitContact(e) {
+  e.preventDefault();
+  const msg = {
+    name:    document.getElementById('c_fname').value + ' ' + document.getElementById('c_lname').value,
+    email:   document.getElementById('c_email').value,
+    phone:   document.getElementById('c_phone').value,
+    subject: document.getElementById('c_subject').value,
+    message: document.getElementById('c_message').value,
+  };
+  ContactDB.add(msg);
+  document.getElementById('contactForm').reset();
+  document.getElementById('contactSuccess').style.display = 'flex';
+  showToast('Message sent successfully!', 'success');
+  setTimeout(() => { document.getElementById('contactSuccess').style.display = 'none'; }, 6000);
+}
+
+const FAQS = [
+  { q: 'Is listing a venue on Utsavam free?', a: 'Yes! Listing your venue on Utsavam is completely free. We believe in connecting venue owners with the right guests without any upfront cost.' },
+  { q: 'How do I express interest in a venue?', a: 'Simply open any venue\'s detail page and click "Express Interest". Fill in your event details and the venue team will reach out to you directly to discuss availability and pricing.' },
+  { q: 'Are the listed prices final?', a: 'The prices shown are indicative starting prices. Final pricing may vary based on season, duration, number of guests, additional services, and the packages you choose. We recommend contacting the venue for a detailed quote.' },
+  { q: 'How does Utsavam verify venues?', a: 'Every venue on Utsavam goes through a manual review process by our team before being published. We verify the address, photos, and basic information to ensure quality and accuracy.' },
+  { q: 'Can I visit the venue before confirming?', a: 'Absolutely. We encourage site visits before confirming any booking. You can contact the venue directly through the contact details on their listing, or through our interest form.' },
+  { q: 'How can convention centres and halls list their venue?', a: 'Visit the "List Your Venue" page and fill in the registration form. Our admin team will review your submission within 2–3 working days and get in touch.' },
+];
+
+document.getElementById('faqList').innerHTML = FAQS.map((f, i) => `
+  <div style="background:#fff;border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm);">
+    <button onclick="toggleFaq(${i})" style="width:100%;text-align:left;padding:18px 20px;font-weight:600;font-size:0.92rem;color:var(--brown-deep);display:flex;justify-content:space-between;align-items:center;background:none;border:none;cursor:pointer;font-family:var(--font-body);">
+      ${f.q}
+      <i class="fas fa-chevron-down faq-icon" id="faq-icon-${i}" style="transition:var(--transition);color:var(--gold-dark);font-size:0.8rem;flex-shrink:0;"></i>
+    </button>
+    <div id="faq-body-${i}" style="display:none;padding:0 20px 18px;color:var(--text-secondary);font-size:0.88rem;line-height:1.7;">${f.a}</div>
+  </div>`).join('');
+
+function toggleFaq(i) {
+  const body = document.getElementById('faq-body-' + i);
+  const icon = document.getElementById('faq-icon-' + i);
+  const isOpen = body.style.display === 'block';
+  body.style.display = isOpen ? 'none' : 'block';
+  icon.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+</script>
+</body>
+</html>
